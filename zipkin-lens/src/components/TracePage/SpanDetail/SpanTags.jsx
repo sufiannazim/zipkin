@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 The OpenZipkin Authors
+ * Copyright 2015-2020 The OpenZipkin Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -28,6 +28,7 @@ const style = theme => ({
   cell: {
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
+    breakWord: theme.wordBreak
   },
   key: {
     color: theme.palette.grey[500],
@@ -39,6 +40,13 @@ const propTypes = {
   tags: spanTagsPropTypes.isRequired,
   classes: PropTypes.shape({}).isRequired,
 };
+
+function isJson(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) { return false;}
+  return true;
+}
 
 const SpanTags = React.memo(({ tags, classes }) => (
   <Paper>
@@ -52,7 +60,7 @@ const SpanTags = React.memo(({ tags, classes }) => (
                   {tag.key}
                 </Box>
                 <Box fontSize="1.05rem">
-                  {tag.value}
+                  {isJson(tag.value) ? JSON.stringify(tag.value) : tag.value}
                 </Box>
               </TableCell>
             </TableRow>
@@ -62,6 +70,7 @@ const SpanTags = React.memo(({ tags, classes }) => (
     </Table>
   </Paper>
 ));
+
 
 SpanTags.propTypes = propTypes;
 
